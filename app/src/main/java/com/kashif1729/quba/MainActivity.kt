@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -43,6 +42,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import android.app.DatePickerDialog
+import androidx.compose.ui.text.input.ImeAction
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -80,7 +80,6 @@ fun MainScreen() {
     val lazyListState = rememberLazyListState()
     val classes = listOf("Nursery", "KG", "1st", "2nd", "3rd", "4th", "5th")
     val subjects = getSubjectsForClass(selectedClass)
-//    val focusManager = LocalFocusManager.current
 
     LazyColumn(
         modifier = Modifier
@@ -378,12 +377,9 @@ fun DatePickerField(
 @Composable
 fun SubjectMarksInput(
     subject: String,
-   // subjectIndex: Int,
-   // totalSubjects: Int,
     subjectMarks: SnapshotStateMap<String, Pair<Int, Int>>,
     onMarksChanged: (Int, Int) -> Unit,
     onError: () -> Unit,
-    //focusManager: androidx.compose.ui.focus.FocusManager
 ) {
     var halfYearly by remember(subject, subjectMarks) {
         mutableStateOf(subjectMarks[subject]?.first?.toString() ?: "")
@@ -393,9 +389,6 @@ fun SubjectMarksInput(
     }
     var halfYearlyError by remember { mutableStateOf(false) }
     var annualError by remember { mutableStateOf(false) }
-    //val halfYearlyFocusRequester = remember { FocusRequester() }
-    //val annualFocusRequester = remember { FocusRequester() }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -418,22 +411,16 @@ fun SubjectMarksInput(
                 halfYearlyError = value.isNotEmpty() && (num == null || num !in 0..50)
                 if (halfYearlyError) onError()
                 onMarksChanged(num ?: 0, annual.toIntOrNull() ?: 0)
-                if (value.length == 2 && !halfYearlyError) {
-                    //annualFocusRequester.requestFocus()
-                }
+
             },
             label = { Text("HY") },
             isError = halfYearlyError,
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp),
-              //  .focusRequester(halfYearlyFocusRequester),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
-                //imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-               // onNext = { annualFocusRequester.requestFocus() }
+                imeAction = ImeAction.Next
             ),
             supportingText = {
                 if (halfYearlyError) {
@@ -448,16 +435,7 @@ fun SubjectMarksInput(
         )
         OutlinedTextField(
             value = annual,
-            onValueChange = { value ->
-                annual = value
-                val num = value.toIntOrNull()
-                annualError = value.isNotEmpty() && (num == null || num !in 0..50)
-                if (annualError) onError()
-                onMarksChanged(halfYearly.toIntOrNull() ?: 0, num ?: 0)
-                if (value.length == 2 && !annualError) {
-                    //focusManager.clearFocus()
-                }
-            },
+            onValueChange = {},
             label = { Text("Annual") },
             isError = annualError,
             modifier = Modifier
@@ -466,7 +444,7 @@ fun SubjectMarksInput(
                 //.focusRequester(annualFocusRequester),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
-                //imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
 
             supportingText = {
