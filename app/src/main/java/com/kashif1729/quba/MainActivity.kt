@@ -435,13 +435,17 @@ fun SubjectMarksInput(
         )
         OutlinedTextField(
             value = annual,
-            onValueChange = {},
+            onValueChange = {value ->
+                halfYearly = value
+                val num = value.toIntOrNull()
+                halfYearlyError = value.isNotEmpty() && (num == null || num !in 0..50)
+                if (halfYearlyError) onError()
+                onMarksChanged(num ?: 0, annual.toIntOrNull() ?: 0)},
             label = { Text("Annual") },
             isError = annualError,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp),
-                //.focusRequester(annualFocusRequester),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
