@@ -436,10 +436,10 @@ fun SubjectMarksInput(
         OutlinedTextField(
             value = annual,
             onValueChange = {value ->
-                halfYearly = value
+                annual = value
                 val num = value.toIntOrNull()
-                halfYearlyError = value.isNotEmpty() && (num == null || num !in 0..50)
-                if (halfYearlyError) onError()
+                annualError = value.isNotEmpty() && (num == null || num !in 0..50)
+                if (annualError) onError()
                 onMarksChanged(num ?: 0, annual.toIntOrNull() ?: 0)},
             label = { Text("Annual") },
             isError = annualError,
